@@ -6,3 +6,4 @@ RUN python -m pip install poetry
 WORKDIR /aviata
 
 ADD provider_a_main.py provider_a_main.py
+ADD provider_b_main.py provider_b_main.py
