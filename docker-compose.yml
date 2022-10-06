@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+    microservice:
+        build:
+            context: .
+        image: aviata
+        container_name: aviata
+        restart: unless-stopped
+        ports:
+            - "8000:8000"
+        command: gunicorn -b 0.0.0.0:8000 -k uvicorn.workers.UvicornWorker provider_a_main:api
