@@ -4,10 +4,15 @@ from database.base import metadata
 from sqlalchemy.engine import Engine, engine_from_config
 
 
+class RequestSettings(BaseSettings):
+    provider_a_url: str = 'http://localhost:3000'
+    provider_b_url: str = 'http://localhost:8443'
+
+
 class DBSettings(BaseSettings):
     """Указывем настройки подключения к бд"""
-    user = 'admin'
-    password = 'admin'
+    user: str = 'admin'
+    password: str = 'admin'
     url: str = f'postgresql://{user}:{password}@localhost:5432/aviata_db'
     connection_timeout: int = 30
     echo: bool = False

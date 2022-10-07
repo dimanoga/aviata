@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, List
+from typing import Any, List, Optional
 from pydantic import BaseModel
 
 
@@ -18,7 +18,7 @@ class Segment(BaseModel):
     operating_airline: str
     marketing_airline: str
     flight_number: str
-    equipment: str
+    equipment: Optional[str]
     dep: Dep
     arr: Arr
     baggage: Any

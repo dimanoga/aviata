@@ -2,7 +2,7 @@ import json
 
 from typing import List
 
-from models import FlightsModel
+from models.flights import FlightsModel
 
 
 def parse_response_file(file_path: str) -> List[FlightsModel]:

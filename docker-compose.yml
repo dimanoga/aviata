@@ -4,18 +4,18 @@ services:
     provider_a:
         build:
             context: .
-        image: aviata
-        container_name: aviata
+        image: provider_a
+        container_name: aviata_a
         restart: unless-stopped
-        ports:
-            - "5000:5000"
-        command: gunicorn -b 0.0.0.0:8000 -k uvicorn.workers.UvicornWorker provider_a_main:api
+        environment:
+            APP_PORT: "3000"
+        command: gunicorn -b 0.0.0.0:3000 -k uvicorn.workers.UvicornWorker provider_a_main:api
     provider_b:
         build:
             context: .
-        image: aviata
-        container_name: aviata
+        image: provider_b
+        container_name: aviata_b
         restart: unless-stopped
-        ports:
-            - "8000:8000"
-        command: gunicorn -b 0.0.0.0:8000 -k uvicorn.workers.UvicornWorker provider_b_main:api
+        environment:
+            APP_PORT: "8443"
+        command: gunicorn -b 0.0.0.0:8443 -k uvicorn.workers.UvicornWorker provider_b_main:api
