@@ -1,3 +1,4 @@
+import json
 import uuid
 from contextlib import contextmanager
 from typing import Iterator, List
@@ -51,6 +52,9 @@ def update_search_result(search_id: uuid.UUID, data: str) -> None:
     with create_session() as session:
         item = session.query(Request).filter(Request.search_id == search_id).first()
         item.status = StatusEnum.completed.value
-        item.data = data
+        if item.data:
+            item.data += json.dumps(data)
+        else:
+            item.data = json.dumps(data)
 
     logger.info(f'Successfully update row with search_id: {search_id}')

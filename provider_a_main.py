@@ -13,6 +13,6 @@ api = fastapi.FastAPI()
 async def search_flight():
     flights = parse_response_file('./response_a.json')
 
-    time.sleep(30)
+    time.sleep(5)
 
     return flights
