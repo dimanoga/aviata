@@ -1,12 +1,10 @@
 import json
 
-from typing import List
-
-from models.flights import FlightsModel
+from pydantic.types import Json
 
 
-def parse_response_file(file_path: str) -> List[FlightsModel]:
+def parse_response_file(file_path: str) -> Json:
     with open(file_path) as json_data:
         data = json.load(json_data)
 
-    return [FlightsModel.parse_obj(item) for item in data]
+    return data

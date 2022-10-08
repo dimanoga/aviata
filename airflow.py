@@ -1,9 +1,9 @@
 import uuid
 from fastapi import BackgroundTasks, FastAPI
 
-from database.requests_schema import StatusEnum
+from database.requests_model import StatusEnum
 from database.utils import create_search_result
-from models.airflow import ResponseModel
+from schemas.airflow import ResponseModel
 from settings import RequestSettings
 from utils.search_flights import get_flights, process_result
 

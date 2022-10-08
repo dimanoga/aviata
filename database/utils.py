@@ -7,9 +7,10 @@ from sqlalchemy import create_engine
 from sqlalchemy_utils import database_exists, create_database
 
 from database.base import Session, metadata
-from database.requests_schema import Request, StatusEnum
+from database.requests_model import Request, StatusEnum
 from logger import logger
-from models.flights import FlightsModel
+from schemas.flights import FlightsModel
+from schemas.requests import RequestSchema
 from settings import DBSettings
 
 DBSettings().setup_db()
@@ -48,13 +49,15 @@ def create_search_result(search_id: uuid.UUID, status: StatusEnum) -> None:
         session.add(item)
 
 
-def update_search_result(search_id: uuid.UUID, data: str) -> None:
+def get_search_result(search_id: uuid.UUID) -> RequestSchema:
+    with create_session() as session:
+        return RequestSchema.from_orm(session.query(Request).filter(Request.search_id == search_id).first())
+
+
+def update_search_result(search_id: uuid.UUID, data: List[dict]) -> None:
     with create_session() as session:
         item = session.query(Request).filter(Request.search_id == search_id).first()
         item.status = StatusEnum.completed.value
-        if item.data:
-            item.data += json.dumps(data)
-        else:
-            item.data = json.dumps(data)
+        item.data = data
 
     logger.info(f'Successfully update row with search_id: {search_id}')
