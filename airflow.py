@@ -20,6 +20,7 @@ api = FastAPI()
 
 @api.post('/search/', status_code=200, response_model=ResponseModel)
 async def search_flight(background_tasks: BackgroundTasks):
+	""" Отправка запроса на поиск рейсов"""
 	request_settings = RequestSettings()
 	search_id = uuid.uuid4()
 	background_tasks.add_task(process_result, search_id=search_id, urls=[request_settings.provider_a_url + '/search',
@@ -30,7 +31,9 @@ async def search_flight(background_tasks: BackgroundTasks):
 
 @api.post('/results/{search_id}/{currency}', status_code=200, response_model=SearchResultModel)
 async def get_flight(search_id: uuid.UUID, currency: str, background_tasks: BackgroundTasks):
-	""" Получаем результаты поиска по уникальному search_id и конвертируем сумму в валюту currency"""
+	""" Получаем результаты поиска по уникальному search_id и конвертируем сумму в валюту currency
+		search_id - id, полученный из запроса POST /search/
+		currency - валюта, в которую нужно конвертировать стоимость"""
 	redis = await aioredis.create_redis(address=('redis', 6379))
 	currency = currency.upper()
 	
