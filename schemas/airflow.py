@@ -21,7 +21,7 @@ class FlightsResultModel(FlightsModel):
 
 
 class SearchResultModel(ResponseModel):
-    status: str
+    status: Optional[str]
     data: Optional[List[FlightsResultModel]]
 
     class Config:
