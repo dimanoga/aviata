@@ -61,6 +61,7 @@ async def get_flight(search_id: uuid.UUID, currency: str, background_tasks: Back
 									   status=search_request.status,
 									   data=[item for item in search_request.data])
 	response = []
+	# TODO: Слишком много if else надо разнести
 	for item in search_request.data:
 		item.price = PriceModel(amount=0, currency=currency)
 		if item.pricing.currency == currency:
