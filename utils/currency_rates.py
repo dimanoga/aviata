@@ -6,19 +6,26 @@ import aiohttp
 import aioredis
 import xmltodict
 
+from custom_exceptions import  CurrencyNotFound
 from logger import logger
 from utils.expire_timestamp import get_expire_timestamp
 
 
 async def get_rates(redis: aioredis.Redis, currency: str) -> float:
+    """ Получаем курс для заданной валюты currency """
     cache = await redis.get(currency)
     if cache is not None:
         return float(cache)
     rates = await cache_currency(redis=redis)
-    return rates.get(currency)
+
+    currency_rate = rates.get(currency)
+    if currency_rate is None:
+        raise CurrencyNotFound(message=f'Currency {currency} not found')
+    return float(currency_rate)
 
 
 async def cache_currency(redis: aioredis.Redis) -> Dict:
+    """ Получаем общий курс валют и эшируем в редис """
     logger.info('Start cashing currencies')
     now_date = datetime.date.today().strftime('%d.%m.%Y')
     async with aiohttp.ClientSession() as session:

@@ -8,8 +8,8 @@ from sqlalchemy_utils import database_exists, create_database
 
 from database.base import Session, metadata
 from database.requests_model import Request, StatusEnum
+from database.results_model import Results
 from logger import logger
-from schemas.flights import FlightsModel
 from schemas.requests import RequestSchema
 from settings import DBSettings
 
@@ -24,7 +24,6 @@ def create_db() -> None:
         metadata.create_all(engine)
 
 
-create_db()
 
 
 @contextmanager
@@ -41,7 +40,7 @@ def create_session(expire_on_commit: bool = True) -> Iterator[so.Session]:
         new_session.close()
 
 
-def create_search_result(search_id: uuid.UUID, status: StatusEnum) -> None:
+async def create_search_request(search_id: uuid.UUID, status: StatusEnum) -> None:
     with create_session() as session:
         item = Request(search_id=search_id)
         if status:
@@ -49,15 +48,22 @@ def create_search_result(search_id: uuid.UUID, status: StatusEnum) -> None:
         session.add(item)
 
 
-def get_search_result(search_id: uuid.UUID) -> RequestSchema:
+async def get_search_request(search_id: uuid.UUID):
     with create_session() as session:
-        return RequestSchema.from_orm(session.query(Request).filter(Request.search_id == search_id).first())
+        obj = session.query(Request).filter(Request.search_id == search_id).first()
+        return RequestSchema.from_orm(obj)
 
 
-def update_search_result(search_id: uuid.UUID, data: List[dict]) -> None:
+async def update_search_request(search_id: uuid.UUID, data: List[dict]) -> None:
     with create_session() as session:
         item = session.query(Request).filter(Request.search_id == search_id).first()
         item.status = StatusEnum.completed.value
         item.data = data
 
     logger.info(f'Successfully update row with search_id: {search_id}')
+
+
+async def create_search_result(search_id: uuid.UUID, data: List[dict]) -> None:
+    with create_session() as session:
+        item = Results(search_id=search_id, data=data)
+        session.add(item)

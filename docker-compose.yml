@@ -1,33 +1,17 @@
 version: '3.7'
 
 services:
-    provider_a:
-        build:
-            context: .
-        image: provider_a
-        container_name: aviata_a
+    db:
+        image: postgres:14.1-alpine
         restart: unless-stopped
         environment:
-            APP_PORT: "3000"
-        command: gunicorn -b 0.0.0.0:3000 -k uvicorn.workers.UvicornWorker provider_a_main:api
-    provider_b:
-        build:
-            context: .
-        image: provider_b
-        container_name: aviata_b
-        restart: unless-stopped
-        environment:
-            APP_PORT: "8443"
-        command: gunicorn -b 0.0.0.0:8443 -k uvicorn.workers.UvicornWorker provider_b_main:api
-    airflow:
-        build:
-            context: .
-        image: airflow
-        container_name: airflow
-        restart: unless-stopped
-        environment:
-            APP_PORT: "9000"
-        command: gunicorn -b 0.0.0.0:9000 -k uvicorn.workers.UvicornWorker airflow:api
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=aviata_db
+        ports:
+            - '5432:5432'
+        volumes:
+            - db:/var/lib/postgresql/data
 
     redis:
         image: redis
@@ -39,3 +23,37 @@ services:
         expose:
             - 6379
         command: redis-server /usr/local/etc/redis/redis.conf
+
+    provider_a:
+        build:
+            context: .
+        image: provider_a
+        container_name: provider_a
+        restart: unless-stopped
+        ports:
+            - "3000:3000"
+        command: gunicorn -b 0.0.0.0:3000 -k uvicorn.workers.UvicornWorker provider_a_main:api
+    provider_b:
+        build:
+            context: .
+        image: provider_b
+        container_name: provider_b
+        restart: unless-stopped
+        ports:
+            - "8443:8443"
+        command: gunicorn -b 0.0.0.0:8443 -k uvicorn.workers.UvicornWorker provider_b_main:api
+    airflow:
+        build:
+            context: .
+        image: airflow
+        container_name: airflow
+        restart: unless-stopped
+        ports:
+            - "9000:9000"
+        command: gunicorn -b 0.0.0.0:9000 -k uvicorn.workers.UvicornWorker airflow:api
+        depends_on:
+            - db
+
+volumes:
+    db:
+        driver: local
