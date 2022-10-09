@@ -21,7 +21,6 @@ api = FastAPI()
 async def search_flight(background_tasks: BackgroundTasks):
 	request_settings = RequestSettings()
 	search_id = uuid.uuid4()
-	# TODO: Переписать на асинхронные вызовы
 	background_tasks.add_task(process_result, search_id=search_id, urls=[request_settings.provider_a_url + '/search',
 																		 request_settings.provider_b_url + '/search'])
 	await create_search_request(search_id=search_id, status=StatusEnum.pending)
@@ -34,12 +33,11 @@ async def get_flight(search_id: uuid.UUID, currency: str, background_tasks: Back
 	redis = await aioredis.create_redis(address=('redis', 6379))
 	currency = currency.upper()
 	
-	# TODO: Переделать.
 	try:
 		search_result = await get_search_result(search_id=search_id, currency=currency)
 		search_result.status = 'COMPLETED'
 		return search_result
-	except ValidationError as e:
+	except ValidationError:
 		pass
 	
 	try:
