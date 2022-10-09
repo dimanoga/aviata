@@ -7,6 +7,7 @@ import aiohttp
 from database.utils import update_search_request, get_search_request
 from logger import logger
 from schemas.flights import FlightsModel
+from schemas.requests import RequestSchema
 
 
 async def get_flights(url: str):
@@ -27,6 +28,7 @@ async def process_result(search_id: uuid.UUID, urls: List[str]) -> None:
 		data = await get_flights(url=url)
 		data = [data.dict() for data in data]
 		search_request = await get_search_request(search_id=search_id)
+		search_request = RequestSchema.from_orm(search_request)
 		if search_request.status == "COMPLETED":
 			data = search_request.data + data
 		await update_search_request(search_id=search_id, data=data)

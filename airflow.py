@@ -8,6 +8,7 @@ from pydantic.error_wrappers import ValidationError
 from custom_exceptions import SEARCH_NOT_FOUND, CURRENCY_NOT_FOUND, CurrencyNotFound
 from database.requests_model import StatusEnum
 from database.utils import create_search_request, get_search_request, create_search_result, create_db, get_search_result
+from logger import logger
 from schemas.airflow import ResponseModel, SearchResultModel, PriceModel
 from schemas.requests import RequestSchema
 from settings import RequestSettings
@@ -33,17 +34,16 @@ async def get_flight(search_id: uuid.UUID, currency: str, background_tasks: Back
 	redis = await aioredis.create_redis(address=('redis', 6379))
 	currency = currency.upper()
 	
-	try:
-		search_result = await get_search_result(search_id=search_id, currency=currency)
+	search_result = await get_search_result(search_id=search_id, currency=currency)
+	if search_result:
+		search_result = SearchResultModel.from_orm(search_result)
 		search_result.status = 'COMPLETED'
 		return search_result
-	except ValidationError:
-		pass
 	
-	try:
-		search_request = await get_search_request(search_id=search_id)
-	except ValidationError:
+	search_request = await get_search_request(search_id=search_id)
+	if not search_request:
 		raise SEARCH_NOT_FOUND
+	
 	search_request = RequestSchema.from_orm(search_request)
 	if search_request.status == 'PENDING':
 		return {'search_id': search_id,

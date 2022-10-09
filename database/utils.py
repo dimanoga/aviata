@@ -1,4 +1,3 @@
-import json
 import uuid
 from contextlib import contextmanager
 from typing import Iterator, List
@@ -10,8 +9,7 @@ from database.base import Session, metadata
 from database.requests_model import Request, StatusEnum
 from database.results_model import Results
 from logger import logger
-from schemas.airflow import SearchResultModel
-from schemas.requests import RequestSchema
+
 from settings import DBSettings
 
 DBSettings().setup_db()
@@ -26,7 +24,7 @@ def create_db() -> None:
 
 
 @contextmanager
-def create_session(expire_on_commit: bool = True) -> Iterator[so.Session]:
+def create_session(expire_on_commit: bool = False) -> Iterator[so.Session]:
 	"""Provide a transactional scope around a series of operations."""
 	new_session = Session(expire_on_commit=expire_on_commit)
 	try:
@@ -47,10 +45,10 @@ async def create_search_request(search_id: uuid.UUID, status: StatusEnum) -> Non
 		session.add(item)
 
 
-async def get_search_request(search_id: uuid.UUID):
+async def get_search_request(search_id: uuid.UUID) -> Request:
 	with create_session() as session:
 		obj = session.query(Request).filter(Request.search_id == search_id).first()
-		return RequestSchema.from_orm(obj)
+		return obj
 
 
 async def update_search_request(search_id: uuid.UUID, data: List[dict]) -> None:
@@ -68,7 +66,7 @@ async def create_search_result(search_id: uuid.UUID, data: List[dict], currency:
 		session.add(obj)
 
 
-async def get_search_result(search_id: uuid.UUID, currency: str) -> SearchResultModel:
+async def get_search_result(search_id: uuid.UUID, currency: str) -> Results:
 	with create_session() as session:
 		obj = session.query(Results).filter(and_(Results.search_id == search_id, Results.currency == currency)).first()
-		return SearchResultModel.from_orm(obj)
+		return obj
