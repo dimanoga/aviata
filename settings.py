@@ -13,7 +13,7 @@ class DBSettings(BaseSettings):
     """Указывем настройки подключения к бд"""
     user: str = 'postgres'
     password: str = 'postgres'
-    url: str = f'postgresql://{user}:{password}@0.0.0.0:5432/aviata_db'
+    url: str = f'postgresql://{user}:{password}@localhost:5432/aviata_db'
     connection_timeout: int = 30
     echo: bool = False
 

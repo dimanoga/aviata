@@ -26,7 +26,7 @@ async def get_rates(redis: aioredis.Redis, currency: str) -> float:
 
 async def cache_currency(redis: aioredis.Redis) -> Dict:
     """ Получаем общий курс валют и эшируем в редис """
-    logger.info('Start cashing currencies')
+    logger.info('Start caching currencies')
     now_date = datetime.date.today().strftime('%d.%m.%Y')
     async with aiohttp.ClientSession() as session:
         async with session.get(f'https://www.nationalbank.kz/rss/get_rates.cfm?fdate={now_date}') as response:
@@ -36,4 +36,5 @@ async def cache_currency(redis: aioredis.Redis) -> Dict:
     for currency, price in rates.items():
         await redis.set(currency, float(price))
         await redis.expireat(currency, get_expire_timestamp())
+    logger.info('Done caching currencies')
     return rates

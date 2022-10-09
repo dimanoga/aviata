@@ -77,5 +77,6 @@ async def get_flight(search_id: uuid.UUID, currency: str, background_tasks: Back
 async def startup():
     redis = await aioredis.create_redis(address=('redis', 6379))
     await cache_currency(redis=redis)
+    
     create_db()
     
