@@ -1,11 +1,6 @@
-import json
-import time
-from typing import List
+import asyncio
 
 import fastapi
-from pydantic.types import Json
-
-from schemas.flights import FlightsModel
 from utils.file_reader import parse_response_file
 
 api = fastapi.FastAPI()
@@ -15,6 +10,6 @@ api = fastapi.FastAPI()
 async def search_flight():
     flights = parse_response_file('./response_a.json')
 
-    time.sleep(30)
+    await asyncio.sleep(30)
 
     return flights
