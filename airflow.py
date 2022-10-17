@@ -20,7 +20,7 @@ api = FastAPI()
 
 
 @api.post('/search/', status_code=200, response_model=ResponseModel)
-async def search_flight(background_tasks: BackgroundTasks):
+async def search_flight():
 	""" Отправка запроса на поиск рейсов"""
 	request_settings = RequestSettings()
 	search_id = uuid.uuid4()
