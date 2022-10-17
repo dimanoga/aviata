@@ -1,7 +1,7 @@
 from pydantic import BaseSettings
+from sqlalchemy.engine import Engine, engine_from_config
 
 from database.base import metadata
-from sqlalchemy.engine import Engine, engine_from_config
 
 
 class RequestSettings(BaseSettings):
@@ -11,11 +11,13 @@ class RequestSettings(BaseSettings):
 
 class DBSettings(BaseSettings):
     """Указывем настройки подключения к бд"""
+
     user: str = 'postgres'
     password: str = 'postgres'
     url: str = f'postgresql://{user}:{password}@db:5432/aviata_db'
     connection_timeout: int = 30
     echo: bool = False
+
     class Config:
         env_prefix = 'DB_'
 

@@ -2,7 +2,6 @@ import uuid
 from typing import List, Optional
 
 from pydantic.main import BaseModel
-from pydantic.types import Json
 
 
 class RequestSchema(BaseModel):

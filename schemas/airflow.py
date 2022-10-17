@@ -1,8 +1,7 @@
 import uuid
-from typing import Optional, List
+from typing import List, Optional
 
-from pydantic import BaseModel, Json
-from pydantic.config import Extra
+from pydantic import BaseModel
 
 from schemas.flights import FlightsModel
 

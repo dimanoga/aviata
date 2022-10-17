@@ -1,9 +1,9 @@
 import enum
 
-from database.base import Base
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import Column, String
-from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.dialects.postgresql import JSON, UUID
+
+from database.base import Base
 
 
 class StatusEnum(enum.Enum):

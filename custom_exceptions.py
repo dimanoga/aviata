@@ -2,8 +2,12 @@ from http import HTTPStatus
 
 from fastapi import HTTPException
 
-SEARCH_NOT_FOUND = HTTPException(status_code=HTTPStatus.CONFLICT, detail='Search_id not found')
-CURRENCY_NOT_FOUND = HTTPException(status_code=HTTPStatus.CONFLICT, detail='Currency not found')
+SEARCH_NOT_FOUND = HTTPException(
+    status_code=HTTPStatus.CONFLICT, detail='Search_id not found'
+)
+CURRENCY_NOT_FOUND = HTTPException(
+    status_code=HTTPStatus.CONFLICT, detail='Currency not found'
+)
 
 
 class CurrencyNotFound(Exception):

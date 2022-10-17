@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from typing import Any, List, Optional
+
 from pydantic import BaseModel
-from pydantic.config import Extra
 
 
 class Dep(BaseModel):
@@ -42,4 +42,3 @@ class FlightsModel(BaseModel):
     refundable: bool
     validating_airline: str
     pricing: Pricing
-
