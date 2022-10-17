@@ -21,15 +21,15 @@ async def get_flights(url: str):
 			return [FlightsModel.parse_obj(item) for item in response]
 
 
-async def process_result(search_id: uuid.UUID, urls: List[str]) -> None:
+async def process_result(search_id: uuid.UUID, url: str) -> None:
 	""" Записываем результаты поиска в базу """
-	for url in urls:
-		logger.info(f'Start request to url - {url}')
-		data = await get_flights(url=url)
-		data = [data.dict() for data in data]
-		search_request = await get_search_request(search_id=search_id)
-		if search_request:
-			search_request = RequestSchema.from_orm(search_request)
-			if search_request.status == "COMPLETED":
-				data = search_request.data + data
-		await update_search_request(search_id=search_id, data=data)
+	
+	logger.info(f'Start request to url - {url}')
+	data = await get_flights(url=url)
+	data = [data.dict() for data in data]
+	search_request = await get_search_request(search_id=search_id)
+	if search_request:
+		search_request = RequestSchema.from_orm(search_request)
+		if search_request.status == "COMPLETED":
+			data = search_request.data + data
+	await update_search_request(search_id=search_id, data=data)

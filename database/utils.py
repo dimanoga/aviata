@@ -54,8 +54,9 @@ async def get_search_request(search_id: uuid.UUID) -> Request:
 async def update_search_request(search_id: uuid.UUID, data: List[dict]) -> None:
 	with create_session() as session:
 		item = session.query(Request).filter(Request.search_id == search_id).first()
-		item.status = StatusEnum.completed.value
-		item.data = data
+		if item:
+			item.status = StatusEnum.completed.value
+			item.data = data
 	
 	logger.info(f'Successfully update row with search_id: {search_id}')
 

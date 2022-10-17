@@ -1,3 +1,4 @@
+import asyncio
 import uuid
 
 import aioredis as aioredis
@@ -23,9 +24,11 @@ async def search_flight(background_tasks: BackgroundTasks):
 	""" Отправка запроса на поиск рейсов"""
 	request_settings = RequestSettings()
 	search_id = uuid.uuid4()
-	background_tasks.add_task(process_result, search_id=search_id, urls=[request_settings.provider_a_url + '/search',
-																		 request_settings.provider_b_url + '/search'])
 	await create_search_request(search_id=search_id, status=StatusEnum.pending)
+	loop = asyncio.get_event_loop()
+	loop.create_task(process_result(search_id=search_id, url=request_settings.provider_a_url + '/search'))
+	loop.create_task(process_result(search_id=search_id, url=request_settings.provider_b_url + '/search'))
+	loop.close()
 	return {'search_id': search_id}
 
 
